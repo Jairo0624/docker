@@ -7,7 +7,6 @@ on:
 
 jobs:
     build-and-push:
-        runs-on: ubuntu-latest
         steps:
             - name: Clone My Repository
               uses: actions/checkout@v2
@@ -15,9 +14,14 @@ jobs:
             - name: Login to Docker Hub o cualquier otro Registro
               run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
-            - name: Contruir imagen
-              run: docker build -t jairo0624/docker-fundamentals:v2 .
+            - name: Construir imagen
+              run: docker build -t jairo0624/docker-fundamentals:${{ github.sha }} .
 
-            - name: Publcar imagen
-              run: docker push jairo0624/docker-fundamentals:v2
-            
+            - name: Renombrar imagen con commit
+              run: docker tag jairo0624/docker-fundamentals:${{ github.sha }} jairo0624/docker-fundamentals:v2 
+
+            - name: Publicar imagen
+              run: |
+                docker push jairo0624/docker-fundamentals:${{ github.sha }}
+                docker push jairo0624/docker-fundamentals:latest
+
